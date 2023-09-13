@@ -27,7 +27,7 @@ func main() {
 	app.BashComplete = func(c *cli.Context) {
 		for _, command := range []string{
 			"--debug", "--skip-tls-verify", "--use-proxy-from-env",
-			"--v2", "--detach-keys", "--ws-origin", "--help",
+			"--v1", "--v2", "--detach-keys", "--ws-origin", "--help",
 			"--generate-bash-completion", "--version",
 			"http://user:pass@host:1234/path/\\\\?arg=abcdef\\\\&arg=ghijkl",
 			"https://user:pass@host:1234/path/\\\\?arg=abcdef\\\\&arg=ghijkl",
@@ -59,6 +59,11 @@ func main() {
 			Value: "ctrl-p,ctrl-q",
 		},
 		cli.BoolFlag{
+                        Name:   "v1",
+                        Usage:  "For Gotty 1.0",
+                        EnvVar: "GOTTY_CLIENT_GOTTY1",
+                },
+                cli.BoolFlag{
 			Name:   "v2",
 			Usage:  "For Gotty 2.0",
 			EnvVar: "GOTTY_CLIENT_GOTTY2",
@@ -110,6 +115,10 @@ func action(c *cli.Context) error {
 		client.UseProxyFromEnv = true
 	}
 
+	client.V2 = true
+	if c.Bool("v1") {
+		client.V2 = false
+	}
 	if c.Bool("v2") {
 		client.V2 = true
 	}
